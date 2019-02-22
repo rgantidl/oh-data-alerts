@@ -1,0 +1,829 @@
+Title,Description,Plot_type,Query
+DC Touch Point distribution,DC_Enriched,bar,"
+SELECT
+  date,0 as count 
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (event_time as DATE)
+  FROM
+    `{client}.dc.enriched_2019*`
+  WHERE
+    cast(event_time  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  DATE(event_time ) as day,
+  COUNT(*) count
+FROM
+  `{client}.dc.enriched_2019*`
+WHERE
+  DATE(event_time ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+DCM Cost Data,DCM_Cost,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+  `{client}.dcm.cost_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+   CAST(date AS DATE) AS date,
+  COUNT(*) count
+FROM
+  `{client}.dcm.cost_2019*`
+WHERE
+  CAST(date AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY 1"
+DCM Spend,DCM_Cost,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.dcm.cost_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  sum(mediaCost) spend
+FROM
+  `{client}.dcm.cost_2019*`
+WHERE
+  CAST (date AS DATE ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Facebook Cost Data,Facebook_Cost,bar,"
+SELECT
+  date,0 as count
+FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date_start as DATE)
+  FROM
+    `{client}.facebook.cost_2019*`
+  WHERE
+    cast(date_start  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date_start  AS DATE) AS date,
+  COUNT(*) count
+FROM
+  `{client}.facebook.cost_2019*`
+WHERE
+  CAST(date_start  AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+order by 1"
+Facebook Spend,Fcebook_Cost,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date_start as DATE)
+  FROM
+    `{client}.facebook.cost_2019*`
+  WHERE
+    cast(date_start  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+     CAST(date_start  AS DATE) as date,
+  sum(spend) as spend
+FROM
+  `{client}.facebook.cost_2019*`
+WHERE
+  CAST (date_start  AS DATE ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Facebook Exposure Data,Facebook_Exposure,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (event_time as DATE)
+  FROM
+    `{client}.facebook.exposure_enriched_2019*`
+  WHERE
+    cast(event_time  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(event_time AS DATE) AS date,
+  COUNT(*) AS count
+FROM
+  `{client}.facebook.exposure_enriched_2019*`
+WHERE
+  CAST(event_time AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Kenshoo search Data,Kenshoo_cost,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.kenshoo.cost_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date   AS DATE) AS date,
+  COUNT(*) count
+FROM
+  `{client}.kenshoo.cost_2019*`
+WHERE
+  CAST(date   AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+order by 1"
+Kenshoo search Spend,Kenshoo_cost,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.kenshoo.cost_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  sum(cost) spend
+FROM
+  `{client}.kenshoo.cost_2019*`
+WHERE
+  CAST ( date  AS DATE )BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Kenshoo display data,Kenshoo_display,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.kenshoo.display_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  sum(cost) spend
+FROM
+  `{client}.kenshoo.display_2019*`
+WHERE
+  CAST ( date  AS DATE )BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Kenshoo display Spend,Kenshoo_display,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.kenshoo.cost_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  sum(cost) spend
+FROM
+  `{client}.kenshoo.cost_2019*`
+WHERE
+  CAST ( date  AS DATE )BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Adwords Cost Data,Adwords_cost,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.adwords.cost_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+   count(*) as count
+FROM
+  `{client}.adwords.cost_2019*`
+WHERE
+  CAST ( date  AS DATE ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Adwords Spend,Adwords_cost,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.adwords.cost_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+   sum(cost) as spend
+FROM
+  `{client}.adwords.cost_2019*`
+WHERE
+  CAST ( date  AS DATE ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Bing Data,Bing_cost,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (TimePeriod as DATE)
+  FROM
+    `{client}.bing.cost_2019*`
+  WHERE
+    cast(TimePeriod  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(TimePeriod  AS DATE) as date,
+  count(*) as count
+FROM
+  `{client}.bing.cost_2019*`
+WHERE
+  CAST ( TimePeriod   AS DATE ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Bing Spend,Bing_cost,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (TimePeriod as DATE)
+  FROM
+    `{client}.bing.cost_2019*`
+  WHERE
+    cast(TimePeriod  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(TimePeriod  AS DATE) as date,
+  count(*) as cnt
+FROM
+  `{client}.bing.cost_2019*`
+WHERE
+  CAST ( TimePeriod   AS DATE )BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Criteo Data,Criteo_cost,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (dateTime as DATE)
+  FROM
+    `{client}.criteo.cost_2019*`
+  WHERE
+    cast(dateTime  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(dateTime  AS DATE) as date,
+   count(*) as count
+FROM
+  `{client}.criteo.cost_2019*`
+WHERE
+  CAST ( dateTime    AS DATE ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Criteo Spend,Criteo_cost,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (dateTime as DATE)
+  FROM
+    `{client}.criteo.cost_2019*`
+  WHERE
+    cast(dateTime  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(dateTime  AS DATE) as date,
+ sum(cost) as spend
+FROM
+  `{client}.criteo.cost_2019*`
+WHERE
+  CAST ( dateTime    AS DATE ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Search Ads Campaign Data,DCM_Search_ads_campaign,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.dcm.search_ads_campaign_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  count(*) as count
+FROM
+  `{client}.dcm.search_ads_campaign_2019*`
+WHERE
+  CAST(date AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Search Ads campaign spend,DCM_Search_ads_campaign,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.dcm.search_ads_campaign_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  SUM(cost) as spend
+FROM
+  `{client}.dcm.search_ads_campaign_2019*`
+WHERE
+  CAST(date AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Search Ads Keyword Data,DCM_Search_ads_keywords,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.dcm.search.ads.keyword_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  count(*) as count
+FROM
+  `{client}.dcm.search_ads_keyword_2019*`
+WHERE
+  CAST(date AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Search Ads Keyword spend,DCM_Search_ads_keywords,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (date as DATE)
+  FROM
+    `{client}.dcm.search_ads_keyword_2019*`
+  WHERE
+    cast(date  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  CAST(date AS DATE) as date,
+  SUM(cost) as spend
+FROM
+  `{client}.dcm.search_ads_keyword_2019*`
+WHERE
+  CAST(date AS DATE) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Email cost,Email_Enriched,bar,"
+SELECT
+  date,0 as spend
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (event_time as DATE)
+  FROM
+    `{client}.enriched_cost_data.email_enriched_2019*`
+  WHERE
+    cast(event_time  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  DATE(event_time ) as date,
+  SUM(media_cost ) as spend
+FROM
+  `{client}.enriched_cost_data.email_enriched_2019*`
+WHERE
+  DATE(event_time ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+IXI Data,IXI_Enriched,bar,"
+SELECT
+  date,0 as count
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (event_time as DATE)
+  FROM
+    `{client}.ixi.transactions_enriched*`
+  WHERE
+    cast(event_time  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  DATE(event_time ) AS date,
+  COUNT(*) AS count
+FROM
+  `{client}.ixi.transactions_enriched`
+WHERE
+  DATE(event_time ) BETWEEN '{start_date}'
+  AND '{end_date}'
+GROUP BY
+  1
+ORDER BY
+  1"
+Conversions Per Day,Pathing_path,bar,"
+SELECT
+  date,0 as conversions
+FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (event_time as DATE)
+  FROM
+    `{client}.pathing.paths_2019*`
+  WHERE
+    cast(event_time  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+   DATE(event_time) as date,
+  COUNT(DISTINCT path_id) as conversions
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  DATE(event_time ) BETWEEN '{start_date}'
+  AND '{end_date}'
+  AND channel NOT IN('internal')
+GROUP BY 1
+ORDER BY
+  1"
+Conversions Per Day Per channel,Pathing_path,stack,"
+SELECT
+  date,NULL as channel,0 as conversions
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (event_time as DATE)
+  FROM
+    `{client}.pathing.paths_2019*`
+  WHERE
+    cast(event_time  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+   DATE(event_time ) as date,
+  channel,
+  COUNT(DISTINCT path_id) as conversions
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  DATE(event_time ) BETWEEN '{start_date}'
+  AND '{end_date}'
+  AND channel NOT IN('internal')
+GROUP BY
+  1,2
+ORDER BY
+  1"
+Path Length Distribution,Pathing_path,bar,"SELECT
+path_length ,
+COUNT(DISTINCT path_id) cnt  
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  DATE(event_time ) =DATE_SUB(current_date(), INTERVAL 4 DAY)
+  AND channel NOT IN('internal')
+GROUP BY
+  1
+ORDER BY
+  1"
+Path Length Distribution per channel,Pathing_path,stack,"SELECT
+   path_length,
+  channel,
+  COUNT(DISTINCT path_id) cnt
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  DATE(event_time )=DATE_SUB(current_date(), INTERVAL 4 DAY)
+  AND channel NOT IN('internal')
+  --and path_length <50
+GROUP BY
+  1,2
+ORDER BY
+  1,2"
+Revenue Per day,Pathing_path,bar,"
+SELECT
+  date,0 as rev
+FROM
+  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+  where date not in ( SELECT
+    DISTINCT cast (event_time as DATE)
+  FROM
+    `{client}.pathing.paths_2019*`
+  WHERE
+    cast(event_time  as DATE) BETWEEN '{start_date}'
+  AND '{end_date}')
+  group by 1
+  union all
+SELECT
+  DATE(event_time ) as date,
+  SUM(credit_weighted ) as rev
+FROM
+  `{client}.pathing.paths_2018*`
+WHERE
+  DATE(event_time ) BETWEEN '{start_date}'
+  AND '{end_date}'
+  AND channel NOT IN('internal')
+GROUP BY
+  1
+ORDER BY
+  1"
+Revenue Per day per channel,Pathing_path,stack,"
+SELECT
+  DATE(event_time ) as date,
+  channel,
+  SUM(credit_weighted ) as rev
+FROM
+  `{client}.pathing.paths_2018*`
+WHERE
+  DATE(event_time ) BETWEEN '{start_date}'
+  AND '{end_date}'
+  AND channel NOT IN('internal')
+GROUP BY
+  1,2
+ORDER BY
+  1"
+Spend Per day per channel,Aggregated_cost,stack,"
+SELECT
+  date,
+  channel,
+  SUM(media_cost) spend
+FROM
+  `{client}.enriched_cost_data.aggregated_cost_2018*`
+WHERE
+  date BETWEEN BETWEEN '{start_date}'
+  AND '{end_date}'
+  AND channel NOT IN('internal')
+GROUP BY
+  1,
+  2
+ORDER BY
+  1,
+  2"
+Null V/S Total campaign for channel paid search,Pathing_path,pie,"SELECT
+  'null_campaign' as campaign,
+  COUNT(*) as count,
+  channel
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='paid search'
+  group by channel
+UNION ALL
+SELECT
+  'total_campaign' as campaign,
+  COUNT(*),channel 
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='paid search'
+  group by channel
+  UNION ALL
+SELECT
+  'empty_campaign' as campaign,
+  COUNT(*),channel
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='paid search'
+  group by channel"
+  Null V/S Total campaign for channel paid social,Pathing_path,pie,"SELECT
+  'null_campaign' as campaign,
+  COUNT(*) as count,
+  channel
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='paid social'
+  group by channel
+UNION ALL
+SELECT
+  'total_campaign' as campaign,
+  COUNT(*),channel 
+FROM
+ `{client}.pathing.paths_2019*`
+WHERE
+  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='paid social'
+  group by channel
+  UNION ALL
+SELECT
+  'empty_campaign' as campaign,
+  COUNT(*),channel
+FROM
+`{client}.pathing.paths_2019*`
+WHERE
+  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='paid social'
+  group by channel"
+  Null V/S Total campaign for channel Display,Pathing_path,pie,"SELECT
+  'null_campaign' as campaign,
+  COUNT(*) as count,
+  channel
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='display'
+  group by channel
+UNION ALL
+SELECT
+  'total_campaign' as campaign,
+  COUNT(*),channel 
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='display'
+  group by channel
+  UNION ALL
+SELECT
+  'empty_campaign' as campaign,
+  COUNT(*),channel
+FROM
+`{client}.pathing.paths_2019*`
+WHERE
+  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel ='display'
+  group by channel"
+  Null V/S Total campaign other,Pathing_path,pie,"SELECT
+  'null_campaign' as campaign,
+  COUNT(*) as count,
+  channel
+FROM
+  `{client}.pathing.paths_2019*`
+WHERE
+  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel not in ('display','paid social','paid search')
+  group by channel
+UNION ALL
+SELECT
+  'total_campaign' as campaign,
+  COUNT(*),channel 
+FROM
+`{client}.pathing.paths_2019*`
+WHERE
+  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel not in ('display','paid social','paid search')
+  group by channel
+  UNION ALL
+SELECT
+  'empty_campaign' as campaign,
+  COUNT(*),channel
+FROM
+ `{client}.pathing.paths_2019*`
+WHERE
+  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+  and channel not in ('display','paid social','paid search')
+  group by channel"
