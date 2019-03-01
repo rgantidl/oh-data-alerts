@@ -265,21 +265,21 @@ SELECT
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
-    DISTINCT cast (event_time as DATE)
+    DISTINCT cast (date_start as DATE)
   FROM
     `{client}.facebook.sync_*`
   WHERE
-    cast(event_time  as DATE) BETWEEN '{start_date}'
+    cast(date_start  as DATE) BETWEEN '{start_date}'
   AND '{end_date}')
   group by 1
   union all
 SELECT
-  CAST(event_time AS DATE) AS date,
+  CAST(date_start AS DATE) AS date,
   COUNT(*) AS count
 FROM
   `{client}.facebook.sync_*`
 WHERE
-  CAST(event_time AS DATE) BETWEEN '{start_date}'
+  CAST(date_start AS DATE) BETWEEN '{start_date}'
   AND '{end_date}'
 GROUP BY
   1
