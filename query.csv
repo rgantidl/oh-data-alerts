@@ -25,7 +25,7 @@ GROUP BY
   1
 ORDER BY
   1"
-DCM Cost Data,DCM_Cost,count,bar,count,"
+DCM Cost Data,DCM_Cost,bar,count,"
 SELECT
   date,0 as count
 FROM
@@ -50,7 +50,7 @@ WHERE
 GROUP BY
   1
 ORDER BY 1"
-DCM_enrich Data,DCM_enriched,count,bar,count,"
+DCM_enrich Data,DCM_enriched,bar,count,"
 SELECT
   date,0 as count 
 FROM
@@ -102,7 +102,7 @@ GROUP BY
   1
 ORDER BY
   1"
-DCM_enriched spend,DCM_enriched,spend,bar,spend,"
+DCM_enriched spend,DCM_enriched,bar,spend,"
 SELECT
   date,0 as spend 
 FROM
