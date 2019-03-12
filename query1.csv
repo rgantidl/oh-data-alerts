@@ -1,77 +1,45 @@
 Title,Description,Plot_type,column,Query
-Facebook Spend,Fcebook_Cost,bar,count,"
+Spend Per day per channel,Aggregated_cost,stack,spend,"
 SELECT
-  date,0 as spend
+  parse_date('%Y%m%d', _table_suffix) as date,
+  channel,
+  SUM(media_cost) spend
 FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT parse_date('%Y%m%d', _table_suffix)
-  FROM
-    `{client}.facebook.cost_*`
-  WHERE
-    parse_date('%Y%m%d', _table_suffix) BETWEEN '{start_date}'
-  AND '{end_date}')
-  group by 1
-  union all
-SELECT
-     parse_date('%Y%m%d', _table_suffix) as date,
-  sum(spend) as spend
-FROM
-  `{client}.facebook.cost_*`
+  `{client}.enriched_cost_data.aggregated_cost_*`
 WHERE
-  parse_date('%Y%m%d', _table_suffix) BETWEEN '{start_date}'
-  AND '{end_date}'
+  _table_suffix BETWEEN '{start_date_string}'
+  AND '{end_date_string}'
+  AND channel NOT IN('internal')
 GROUP BY
-  1
+  1,
+  2
 ORDER BY
-  1"
-Facebook Exposure Data,Facebook_Exposure,bar,count,"
+  1,
+  2"
+
+Revenue Per day,Aggregated_cost,bar,rev,"
 SELECT
-  date,0 as count
+  date,0 as rev
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
-   parse_date('%Y%m%d', _table_suffix)
+    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
   FROM
-    `{client}.facebook.exposure_enriched_*`
+    `{client}.enriched_cost_data.aggregated_cost_revenue_*`
   WHERE
-    parse_date('%Y%m%d', _table_suffix) BETWEEN '{start_date}'
-  AND '{end_date}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) AS date,
-  COUNT(*) AS count
-FROM
-  `{client}.facebook.exposure_enriched_*`
-WHERE
-  parse_date('%Y%m%d', _table_suffix) BETWEEN '{start_date}'
-  AND '{end_date}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Adwords Spend,Adwords_cost,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    parse_date('%Y%m%d', _table_suffix)
-  FROM
-    `{client}.adwords.cost_*`
-  WHERE
-    parse_date('%Y%m%d', _table_suffix) BETWEEN '{start_date}'
-  AND '{end_date}')
+    _table_suffix BETWEEN '{start_date_string}'
+  AND '{end_date_string}')
   group by 1
   union all
 SELECT
   parse_date('%Y%m%d', _table_suffix) as date,
-   sum(cost) as spend
+  SUM(revenue_weighted ) as rev
 FROM
-  `{client}.adwords.cost_*`
+  `{client}.enriched_cost_data.aggregated_cost_revenue_*`
 WHERE
-  parse_date('%Y%m%d', _table_suffix) BETWEEN '{start_date}'
-  AND '{end_date}'
+ _table_suffix BETWEEN '{start_date_string}'
+  AND '{end_date_string}'
+  AND channel NOT IN('internal')
 GROUP BY
   1
 ORDER BY
