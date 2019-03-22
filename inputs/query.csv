@@ -1,7 +1,7 @@
-Title,Description,Plot_type,column,Query
+title,description,plot_type,column,query
 DC Touch Point distribution,DC_Enriched,bar,count,"
 SELECT
-  date,0 as count 
+  date,0 as count
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -52,7 +52,7 @@ GROUP BY
 ORDER BY 1"
 DCM_enrich Data,DCM_enriched,bar,count,"
 SELECT
-  date,0 as count 
+  date,0 as count
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -104,7 +104,7 @@ ORDER BY
   1"
 DCM_enriched spend,DCM_enriched,bar,spend,"
 SELECT
-  date,0 as spend 
+  date,0 as spend
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -155,7 +155,7 @@ GROUP BY
 order by 1"
 Facebook Cost enriched,Facebook_enriched,bar,count,"
 SELECT
-  date,0 as count 
+  date,0 as count
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -208,7 +208,7 @@ ORDER BY
   1"
 Facebook enriched spend,Facebook_enriched,bar,spend,"
 SELECT
-  date,0 as spend 
+  date,0 as spend
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -624,7 +624,7 @@ ORDER BY
   1"
 Search Ads enriched data,Search_Ads_enriched,bar,count,"
 SELECT
-  date,0 as count 
+  date,0 as count
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -676,7 +676,7 @@ ORDER BY
   1"
 Search Ads enriched Spend,search_ads_enriched,bar,spend,"
 SELECT
-  date,0 as spend 
+  date,0 as spend
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -728,7 +728,7 @@ ORDER BY
   1"
 shopping Enriched data,shopping_enriched,bar,count,"
  SELECT
-  date,0 as count 
+  date,0 as count
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -781,7 +781,7 @@ ORDER BY
   1"
 Shopping Enriched cost,Shopping_enriched,bar,spend,"
  SELECT
-  date,0 as spend 
+  date,0 as spend
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -834,7 +834,7 @@ ORDER BY
   1"
 Cost Merged Data,cost_merged,bar,count,"
 SELECT
-  date,0 as count 
+  date,0 as count
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -860,7 +860,7 @@ ORDER BY
   1"
 Aggregated Cost data,Aggregated_cost,bar,count,"
 SELECT
-  date,0 as count 
+  date,0 as count
 FROM
   UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
   where date not in ( SELECT
@@ -942,7 +942,7 @@ ORDER BY
 Path Length Distribution,Pathing_path,bar,path,"
 SELECT
 path_length ,
-COUNT(DISTINCT path_id) count  
+COUNT(DISTINCT path_id) count
 FROM
   `{client}.pathing.paths_*`
 WHERE
@@ -951,7 +951,7 @@ WHERE
 GROUP BY
   1
 ORDER BY
-  1 
+  1
 "
 Path Length Distribution per channel,Pathing_path,stack,path,"SELECT
    path_length,
@@ -1027,7 +1027,7 @@ WHERE
 UNION ALL
 SELECT
   'total_campaign' as campaign,
-  COUNT(*),channel 
+  COUNT(*),channel
 FROM
   `{client}.pathing.paths_*`
 WHERE
@@ -1057,7 +1057,7 @@ WHERE
 UNION ALL
 SELECT
   'total_campaign' as campaign,
-  COUNT(*),channel 
+  COUNT(*),channel
 FROM
  `{client}.pathing.paths_*`
 WHERE
@@ -1087,7 +1087,7 @@ WHERE
 UNION ALL
 SELECT
   'total_campaign' as campaign,
-  COUNT(*),channel 
+  COUNT(*),channel
 FROM
   `{client}.pathing.paths_*`
 WHERE
@@ -1117,7 +1117,7 @@ WHERE
 UNION ALL
 SELECT
   'total_campaign' as campaign,
-  COUNT(*),channel 
+  COUNT(*),channel
 FROM
 `{client}.pathing.paths_*`
 WHERE
