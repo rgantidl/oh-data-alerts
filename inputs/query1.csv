@@ -1,0 +1,76 @@
+Query to match the dcm raw cost with the dcm_enriched cost excliding add_tracker and click_tracker
+
+1)
+SELECT
+  SUM(media_cost ),
+  _TABLE_SUFFIX AS st
+FROM
+  `open-colleges.enriched_cost_data.dcm_enriched_201902*`
+GROUP BY
+  2
+ORDER BY
+  2
+  
+2)
+
+ELECT
+  SUM(mediaCost )+SUM(dbmCost),
+  _TABLE_SUFFIX AS st
+FROM
+  `open-colleges.dcm.cost_201902*`
+WHERE
+  campaignId NOT IN (
+  SELECT
+    DISTINCT campaignId
+  FROM
+    `open-colleges.dcm.ads_20190209`
+  WHERE
+    type IN ('AD_SERVING_CLICK_TRACKER',
+      'AD_SERVING_TRACKING'))
+GROUP BY
+  2
+ORDER BY
+  2
+  
+  to check credit weight in path table
+  
+ SELECT
+  SUM(credit_weighted ),
+  path_id,
+  channel,
+  touchpoint_index
+FROM
+  `dyson-205108.pathing.paths_2019*`
+WHERE
+  _TABLE_SUFFIX BETWEEN '0101'
+  AND '0228'
+GROUP BY
+  2,
+  3,
+  4
+ORDER BY
+  2,
+  3,
+  4
+  
+  SELECT
+  SUM(credit_weighted ),
+  path_id,
+  channel,
+  touchpoint_index
+FROM
+  `dyson-205108.pathing.paths_2019*`
+WHERE
+  _TABLE_SUFFIX BETWEEN '0101'
+  AND '0228'
+  and touchpoint_index =1 and credit_weighted =0
+GROUP BY
+  2,
+  3,
+  4
+ORDER BY
+  2,
+  3,
+  4
+  
+  
