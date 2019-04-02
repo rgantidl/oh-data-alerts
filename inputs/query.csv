@@ -1,1136 +1,1211 @@
-title,description,plot_type,column,query
-DC Touch Point distribution,DC_Enriched,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.dc.enriched_*`
-  WHERE
-      _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  COUNT(*) count
-FROM
-  `{client}.dc.enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-DCM Cost Data,DCM_Cost,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-  `{client}.dcm.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-   parse_date('%Y%m%d', _table_suffix)  AS date,
-  COUNT(*) count
-FROM
-  `{client}.dcm.cost_*`
-WHERE
- _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY 1"
-DCM_enrich Data,DCM_enriched,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.dcm_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
- parse_date('%Y%m%d', _table_suffix)  as date,
-  COUNT(*) count
-FROM
-  `{client}.enriched_cost_data.dcm_enriched_*`
-WHERE
-  _table_suffix between '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-DCM Spend,DCM_Cost,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.dcm.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  sum(mediaCost) spend
-FROM
-  `{client}.dcm.cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-DCM_enriched spend,DCM_enriched,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.dcm_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  sum(media_cost) as spend
-FROM
-  `{client}.enriched_cost_data.dcm_enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Facebook Cost Data,Facebook_Cost,bar,count,"
-SELECT
-  date,0 as count
-FROM
+source,table,title,plot_type,metric_type,query
+dc,enriched,DC Number of Touch Points/day,bar,count,"SELECT
+ date,0 as count
+ FROM
  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.facebook.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) AS date,
-  COUNT(*) count
-FROM
-  `{client}.facebook.cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-order by 1"
-Facebook Cost enriched,Facebook_enriched,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.facebook_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.dc.enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
  parse_date('%Y%m%d', _table_suffix) as date,
-  COUNT(*) count
-FROM
-  `{client}.enriched_cost_data.facebook_enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1
-  "
-Facebook Spend,Fcebook_Cost,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.facebook.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-     CAST(date_start  AS DATE) as date,
-  sum(spend) as spend
-FROM
-  `{client}.facebook.cost_*`
-WHERE
+ COUNT(*) count
+ FROM
+ `{client}.dc.enriched_*`
+ WHERE
  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Facebook enriched spend,Facebook_enriched,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.facebook_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  sum(media_cost) as spend
-FROM
-  `{client}.enriched_cost_data.facebook_enriched_*`
-WHERE
- _table_suffix  between'{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1
-  "
-Facebook Exposure Data,Facebook_Exposure,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.facebook.exposure_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) AS date,
-  COUNT(*) AS count
-FROM
-  `{client}.facebook.exposure_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Facebook Sync Data,Facebook_sync,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.facebook.sync_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
- parse_date('%Y%m%d', _table_suffix)  AS date,
-  COUNT(*) AS count
-FROM
-  `{client}.facebook.sync_*`
-WHERE
-   _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Kenshoo search Data,Kenshoo_cost,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.kenshoo.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) AS date,
-  COUNT(*) count
-FROM
-  `{client}.kenshoo.cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-order by 1"
-Kenshoo search Spend,Kenshoo_cost,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.kenshoo.cost_*`
-  WHERE
-   _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix)  as date,
-  sum(cost) spend
-FROM
-  `{client}.kenshoo.cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Kenshoo display data,Kenshoo_display,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.kenshoo.display_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  sum(cost) spend
-FROM
-  `{client}.kenshoo.display_*`
-WHERE
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,cost,DCM Cost Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.dcm.cost_*`
+ WHERE
  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Kenshoo display Spend,Kenshoo_display,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.kenshoo.display_*`
-  WHERE
-   _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  sum(cost) spend
-FROM
-  `{client}.kenshoo.display_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Adwords Cost Data,Adwords_cost,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.adwords.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix)  as date,
-   count(*) as count
-FROM
-  `{client}.adwords.cost_*`
-WHERE
-  _table_suffix between '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Adwords spend,Adwords_cost,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.adwords.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix)  as date,
-   sum(Cost) as spend
-FROM
-  `{client}.adwords.cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Adwords click Data,Adwords_click,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.adwords.click_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-   count(*) as count
-FROM
-  `{client}.adwords.click_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Adwords campaign Data,Adwords_campaign,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.adwords.campaign_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-   count(*) as count
-FROM
-  `{client}.adwords.campaign_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Bing Data,Bing_cost,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.bing.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  count(*) as count
-FROM
-  `{client}.bing.cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Bing Spend,Bing_cost,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.bing.cost_*`
-  WHERE
-   _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  count(*) as cnt
-FROM
-  `{client}.bing.cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Criteo Data,Criteo_cost,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.criteo.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-   count(*) as count
-FROM
-  `{client}.criteo.cost_*`
-WHERE
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) AS date,
+ COUNT(*) count
+ FROM
+ `{client}.dcm.cost_*`
+ WHERE
  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Criteo Spend,Criteo_cost,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.criteo.cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY 1"
+dcm,enriched,DCM Cost Data Enriched.,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.dcm_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(*) count
+ FROM
+ `{client}.enriched_cost_data.dcm_enriched_*`
+ WHERE
+ _table_suffix between '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,cost,DCM Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.dcm.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(mediaCost) spend
+ FROM
+ `{client}.dcm.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,enriched,DCM Spend Enriched,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.dcm_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(media_cost) as spend
+ FROM
+ `{client}.enriched_cost_data.dcm_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+facebook,cost,Facebook Cost Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.facebook.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) AS date,
+ COUNT(*) count
+ FROM
+ `{client}.facebook.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ order by 1"
+facebook,enriched,Facebook Cost enriched,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.facebook_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(*) count
+ FROM
+ `{client}.enriched_cost_data.facebook_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+facebook,cost,Facebook Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.facebook.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ CAST(date_start AS DATE) as date,
+ sum(spend) as spend
+ FROM
+ `{client}.facebook.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+facebook,enriched,Facebook Spend Enriched,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.facebook_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(media_cost) as spend
+ FROM
+ `{client}.enriched_cost_data.facebook_enriched_*`
+ WHERE
+ _table_suffix between'{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+facebook,exposure,Facebook Exposure Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.facebook.exposure_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) AS date,
+ COUNT(*) AS count
+ FROM
+ `{client}.facebook.exposure_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+facebook,sync,Facebook Sync Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.facebook.sync_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) AS date,
+ COUNT(*) AS count
+ FROM
+ `{client}.facebook.sync_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+kenshoo,cost,Kenshoo Search Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.kenshoo.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) AS date,
+ COUNT(*) count
+ FROM
+ `{client}.kenshoo.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ order by 1"
+kenshoo,kenshoo_search_enriched,Kenshoo Search Enriched Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.kenshoo_search_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) AS date,
+ COUNT(*) count
+ FROM
+ `{client}.enriched_cost_data.kenshoo_search_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ order by 1"
+kenshoo,cost,Kenshoo Search Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.kenshoo.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(cost) spend
+ FROM
+ `{client}.kenshoo.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+kenshoo,display,Kenshoo Display Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.kenshoo.display_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.kenshoo.display_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+kenshoo,kenshoo_display_enriched,Kenshoo Display Enriched Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.kenshoo_display_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.enriched_cost_data.kenshoo_display_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+kenshoo,display,Kenshoo Display Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.kenshoo.display_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(cost) spend
+ FROM
+ `{client}.kenshoo.display_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+adwords,cost,Adwords Cost Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.adwords.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.adwords.cost_*`
+ WHERE
+ _table_suffix between '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+adwords,cost,Adwords Cost Enriched Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.adwords_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.enriched_cost_data.adwords_enriched_*`
+ WHERE
+ _table_suffix between '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+adwords,cost,Adwords Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.adwords.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(Cost) as spend
+ FROM
+ `{client}.adwords.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+adwords,click,Adwords Click Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.adwords.click_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.adwords.click_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+adwords,campaign,Adwords Campaign Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.adwords.campaign_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.adwords.campaign_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+bing,cost,Bing Cost Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.bing.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.bing.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+bing,cost,Bing Cost Enriched Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.bing_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.enriched_cost_data.bing_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+bing,cost,Bing Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.bing.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as cnt
+ FROM
+ `{client}.bing.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+criteo,cost,Criteo Cost Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.criteo.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.criteo.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+criteo,cost,Criteo Cost Enriched Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.bing_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.enriched_cost_data.bing_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+criteo,cost,Criteo Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.criteo.cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
  sum(cost) as spend
-FROM
-  `{client}.criteo.cost_*`
-WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Search Ads Campaign Data,DCM_Search_ads_campaign,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.dcm.search_ads_campaign_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  count(*) as count
-FROM
-  `{client}.dcm.search_ads_campaign_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Search Ads enriched data,Search_Ads_enriched,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.search_ads_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  COUNT(*) count
-FROM
-  `{client}.enriched_cost_data.search_ads_enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Search Ads campaign spend,DCM_Search_ads_campaign,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.dcm.search_ads_campaign_*`
-  WHERE
-    _table_suffix between  '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  SUM(cost) as spend
-FROM
-  `{client}.dcm.search_ads_campaign_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Search Ads enriched Spend,search_ads_enriched,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.search_ads_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix)  as date,
-  sum(media_cost) as spend
-FROM
-  `{client}.enriched_cost_data.search_ads_enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Search Ads Keyword Data,DCM_Search_ads_keywords,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.dcm.search_ads_keyword_*`
-  WHERE
-   _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
- parse_date('%Y%m%d', _table_suffix) as date,
-  count(*) as count
-FROM
-  `{client}.dcm.search_ads_keyword_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-shopping Enriched data,shopping_enriched,bar,count,"
- SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.shopping_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
- parse_date('%Y%m%d', _table_suffix) as date,
-  COUNT(*) count
-FROM
-  `{client}.enriched_cost_data.shopping_enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1
-  "
-Search Ads Keyword spend,DCM_Search_ads_keywords,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.dcm.search_ads_keyword_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  SUM(cost) as spend
-FROM
-  `{client}.dcm.search_ads_keyword_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Shopping Enriched cost,Shopping_enriched,bar,spend,"
- SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.shopping_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix)  as date,
-  sum(media_cost) as spend
-FROM
-  `{client}.enriched_cost_data.shopping_enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1
-  "
-Email cost,Email_Enriched,bar,spend,"
-SELECT
-  date,0 as spend
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.email_enriched_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  SUM(media_cost ) as spend
-FROM
-  `{client}.enriched_cost_data.email_enriched_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Cost Merged Data,cost_merged,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.cost_merged_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  COUNT(*) count
-FROM
-  `{client}.enriched_cost_data.cost_merged_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Aggregated Cost data,Aggregated_cost,bar,count,"
-SELECT
-  date,0 as count
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.aggregated_cost_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  COUNT(*) count
-FROM
-  `{client}.enriched_cost_data.aggregated_cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-GROUP BY
-  1
-ORDER BY
-  1"
-Conversions Per Day,Pathing_path,bar,conversions,"
-SELECT
-  date,0 as conversions
-FROM
- UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.pathing.paths_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-   parse_date('%Y%m%d', _table_suffix) as date,
-  COUNT(DISTINCT path_id) as conversions
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-  AND channel NOT IN('internal')
-GROUP BY 1
-ORDER BY
-  1"
-Conversions Per Day Per channel,Pathing_path,stack,conversions,"
-SELECT
-  date,NULL as channel,0 as conversions
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.pathing.paths_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-   parse_date('%Y%m%d', _table_suffix) as date,
-  channel,
-  COUNT(DISTINCT path_id) as conversions
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-  AND channel NOT IN('internal')
-GROUP BY
-  1,2
-ORDER BY
-  1
- "
-Path Length Distribution,Pathing_path,bar,path,"
-SELECT
-path_length ,
-COUNT(DISTINCT path_id) count
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  DATE(event_time ) =DATE_SUB(current_date(), INTERVAL 4 DAY)
-  AND channel NOT IN('internal')
-GROUP BY
-  1
-ORDER BY
-  1
-"
-Path Length Distribution per channel,Pathing_path,stack,path,"SELECT
-   path_length,
-  channel,
-  COUNT(DISTINCT path_id) count
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  DATE(event_time )=DATE_SUB(current_date(), INTERVAL 4 DAY)
-  AND channel NOT IN('internal')
-  --and path_length <50
-GROUP BY
-  1,2
-ORDER BY
-  1,2
-  "
-Spend Per day per channel,Aggregated_cost,stack,spend,"
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  channel,
-  SUM(media_cost) spend
-FROM
-  `{client}.enriched_cost_data.aggregated_cost_*`
-WHERE
-  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-  AND channel NOT IN('internal')
-GROUP BY
-  1,
-  2
-ORDER BY
-  1,
-  2"
-
-Revenue Per day,Aggregated_cost,bar,rev,"
-SELECT
-  date,0 as rev
-FROM
-  UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
-  where date not in ( SELECT
-    DISTINCT parse_date('%Y%m%d', _table_suffix) as st
-  FROM
-    `{client}.enriched_cost_data.aggregated_cost_revenue_*`
-  WHERE
-    _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}')
-  group by 1
-  union all
-SELECT
-  parse_date('%Y%m%d', _table_suffix) as date,
-  SUM(revenue_weighted ) as rev
-FROM
-  `{client}.enriched_cost_data.aggregated_cost_revenue_*`
-WHERE
+ FROM
+ `{client}.criteo.cost_*`
+ WHERE
  _table_suffix BETWEEN '{start_date_string}'
-  AND '{end_date_string}'
-  AND channel NOT IN('internal')
-GROUP BY
-  1
-ORDER BY
-  1"
-
-Null V/S Total campaign for channel paid search,Pathing_path,pie,path,"SELECT
-  'null_campaign' as campaign,
-  COUNT(*) as count,
-  channel
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
-  and channel ='paid search'
-  group by channel
-UNION ALL
-SELECT
-  'total_campaign' as campaign,
-  COUNT(*),channel
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
-  and channel ='paid search'
-  group by channel
-  UNION ALL
-SELECT
-  'empty_campaign' as campaign,
-  COUNT(*),channel
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
-  and channel ='paid search'
-  group by channel"
-  Null V/S Total campaign for channel paid social,Pathing_path,pie,path,"SELECT
-  'null_campaign' as campaign,
-  COUNT(*) as count,
-  channel
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
-  and channel ='paid social'
-  group by channel
-UNION ALL
-SELECT
-  'total_campaign' as campaign,
-  COUNT(*),channel
-FROM
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,search_ads_campaign,Search Ads Campaign Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.dcm.search_ads_campaign_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.dcm.search_ads_campaign_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,search_ads_enriched,Search Ads Campaign Enriched Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.search_ads_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(*) count
+ FROM
+ `{client}.enriched_cost_data.search_ads_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,search_ads_campaign,Search Ads campaign Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.dcm.search_ads_campaign_*`
+ WHERE
+ _table_suffix between '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ SUM(cost) as spend
+ FROM
+ `{client}.dcm.search_ads_campaign_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,search_ads_enriched,Search Ads Campaign Enriched Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.search_ads_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(media_cost) as spend
+ FROM
+ `{client}.enriched_cost_data.search_ads_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,search_ads_keyword,Search Ads Keyword Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.dcm.search_ads_keyword_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ count(*) as count
+ FROM
+ `{client}.dcm.search_ads_keyword_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,shopping_enriched,Shopping Enriched Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.shopping_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(*) count
+ FROM
+ `{client}.enriched_cost_data.shopping_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,search_ads_keyword,Search Ads Keyword Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.dcm.search_ads_keyword_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ SUM(cost) as spend
+ FROM
+ `{client}.dcm.search_ads_keyword_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dcm,shopping_enriched,Shopping Enriched Spend,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.shopping_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ sum(media_cost) as spend
+ FROM
+ `{client}.enriched_cost_data.shopping_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+email,email_enriched,Email Cost,bar,spend,"SELECT
+ date,0 as spend
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.email_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ SUM(media_cost ) as spend
+ FROM
+ `{client}.enriched_cost_data.email_enriched_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+enriched_cost_data,cost_merged,Cost Merged Data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.cost_merged_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(*) count
+ FROM
+ `{client}.enriched_cost_data.cost_merged_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+enriched_cost_data,aggregated_cost,Aggregated Cost data,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.aggregated_cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(*) count
+ FROM
+ `{client}.enriched_cost_data.aggregated_cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dc,paths,Conversions Per Day,bar,conversions,"SELECT
+ date,0 as conversions
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
  `{client}.pathing.paths_*`
-WHERE
-  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel ='paid social'
-  group by channel
-  UNION ALL
-SELECT
-  'empty_campaign' as campaign,
-  COUNT(*),channel
-FROM
-`{client}.pathing.paths_*`
-WHERE
-  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel ='paid social'
-  group by channel"
-  Null V/S Total campaign for channel Display,Pathing_path,pie,path,"SELECT
-  'null_campaign' as campaign,
-  COUNT(*) as count,
-  channel
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel ='display'
-  group by channel
-UNION ALL
-SELECT
-  'total_campaign' as campaign,
-  COUNT(*),channel
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel ='display'
-  group by channel
-  UNION ALL
-SELECT
-  'empty_campaign' as campaign,
-  COUNT(*),channel
-FROM
-`{client}.pathing.paths_*`
-WHERE
-  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel ='display'
-  group by channel"
-Null V/S Total campaign other,Pathing_path,pie,path,"SELECT
-  'null_campaign' as campaign,
-  COUNT(*) as count,
-  channel
-FROM
-  `{client}.pathing.paths_*`
-WHERE
-  campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel not in ('display','paid social','paid search')
-  group by channel
-UNION ALL
-SELECT
-  'total_campaign' as campaign,
-  COUNT(*),channel
-FROM
-`{client}.pathing.paths_*`
-WHERE
-  1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel not in ('display','paid social','paid search')
-  group by channel
-  UNION ALL
-SELECT
-  'empty_campaign' as campaign,
-  COUNT(*),channel
-FROM
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(DISTINCT path_id) as conversions
+ FROM
  `{client}.pathing.paths_*`
-WHERE
-  campaign_name =''  and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
-  and channel not in ('display','paid social','paid search')
-  group by channel"
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ AND channel NOT IN('internal')
+ GROUP BY 1
+ ORDER BY
+ 1"
+dc,paths,Conversions Per Day / Channel,stack,conversions,"SELECT
+ date,NULL as channel,0 as conversions
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ channel,
+ COUNT(DISTINCT path_id) as conversions
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ AND channel NOT IN('internal')
+ GROUP BY
+ 1,2
+ ORDER BY
+ 1"
+dc,paths,Path Length Distribution,bar,path,"SELECT
+ path_length ,
+ COUNT(DISTINCT path_id) count
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ DATE(event_time ) =DATE_SUB(current_date(), INTERVAL 4 DAY)
+ AND channel NOT IN('internal')
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dc,paths,Path Length Distribution / Channel,stack,path,"SELECT
+ path_length,
+ channel,
+ COUNT(DISTINCT path_id) count
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ DATE(event_time )=DATE_SUB(current_date(), INTERVAL 4 DAY)
+ AND channel NOT IN('internal')
+ GROUP BY
+ 1,2
+ ORDER BY
+ 1,2"
+enriched_cost_data,aggregated_cost,Spend Per Day / Channel,stack,spend,"SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ channel,
+ SUM(media_cost) spend
+ FROM
+ `{client}.enriched_cost_data.aggregated_cost_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ AND channel NOT IN('internal')
+ GROUP BY
+ 1,
+ 2
+ ORDER BY
+ 1,
+ 2"
+enriched_cost_data,aggregated_cost_revenue,Revenue Per Day,bar,rev,"SELECT
+ date,0 as rev
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ DISTINCT parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.enriched_cost_data.aggregated_cost_revenue_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ SUM(revenue_weighted ) as rev
+ FROM
+ `{client}.enriched_cost_data.aggregated_cost_revenue_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ AND channel NOT IN('internal')
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
+dc,paths,Null V/S Total Campaign for channel Paid Search,pie,path,"SELECT
+ 'null_campaign' as campaign,
+ COUNT(*) as count,
+ channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
+ and channel ='paid search'
+ group by channel
+ UNION ALL
+ SELECT
+ 'total_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ 1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
+ and channel ='paid search'
+ group by channel
+ UNION ALL
+ SELECT
+ 'empty_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name ='' and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
+ and channel ='paid search'
+ group by channel"
+dc,paths,Null V/S Total Campaign for channel Paid Social,pie,path,"SELECT
+ 'null_campaign' as campaign,
+ COUNT(*) as count,
+ channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 4 DAY)
+ and channel ='paid social'
+ group by channel
+ UNION ALL
+ SELECT
+ 'total_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ 1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel ='paid social'
+ group by channel
+ UNION ALL
+ SELECT
+ 'empty_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name ='' and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel ='paid social'
+ group by channel"
+dc,paths,Null V/S Total Campaign for channel Display,pie,path,"SELECT
+ 'null_campaign' as campaign,
+ COUNT(*) as count,
+ channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel ='display'
+ group by channel
+ UNION ALL
+ SELECT
+ 'total_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ 1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel ='display'
+ group by channel
+ UNION ALL
+ SELECT
+ 'empty_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name ='' and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel ='display'
+ group by channel"
+dc,paths,Null V/S Total Campaign for channel Other,pie,path,"SELECT
+ 'null_campaign' as campaign,
+ COUNT(*) as count,
+ channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name IS NULL and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel not in ('display','paid social','paid search')
+ group by channel
+ UNION ALL
+ SELECT
+ 'total_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ 1=1 and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel not in ('display','paid social','paid search')
+ group by channel
+ UNION ALL
+ SELECT
+ 'empty_campaign' as campaign,
+ COUNT(*),channel
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ campaign_name ='' and DATE(event_time)=DATE_SUB(current_date(), INTERVAL 04 DAY)
+ and channel not in ('display','paid social','paid search')
+ group by channel"
