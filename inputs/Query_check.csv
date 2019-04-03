@@ -1,0 +1,15 @@
+Title,Description,Plot_type,column,Query
+Path Length Distribution,Pathing_path,bar,path,"
+SELECT
+path_length ,
+COUNT(DISTINCT path_id) count  
+FROM
+  `{client}.pathing.paths_*`
+WHERE
+  DATE(event_time ) =DATE_SUB(current_date(), INTERVAL 90 DAY)
+  AND channel NOT IN('internal')
+GROUP BY
+  1
+ORDER BY
+  1 
+"
