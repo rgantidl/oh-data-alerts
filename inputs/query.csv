@@ -970,6 +970,31 @@ enriched_cost_data,aggregated_cost,Aggregated Cost data,bar,count,"SELECT
  1
  ORDER BY
  1"
+dc,paths,Path table number of Touch Points/day,bar,count,"SELECT
+ date,0 as count
+ FROM
+ UNNEST(GENERATE_DATE_ARRAY('{start_date}','{end_date}')) AS date
+ where date not in ( SELECT
+ parse_date('%Y%m%d', _table_suffix) as st
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}')
+ group by 1
+ union all
+ SELECT
+ parse_date('%Y%m%d', _table_suffix) as date,
+ COUNT(*) count
+ FROM
+ `{client}.pathing.paths_*`
+ WHERE
+ _table_suffix BETWEEN '{start_date_string}'
+ AND '{end_date_string}'
+ GROUP BY
+ 1
+ ORDER BY
+ 1"
 dc,paths,Conversions Per Day,bar,conversions,"SELECT
  date,0 as conversions
  FROM
