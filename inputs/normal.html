@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <h1 style="color:green;font-size:25px">
+    {% block title %}No missing Data!!{% endblock %}
+</head>
+<body>
+   <p style="color:black;font-size:15px">
+    {% block content%}
+    All the tables are avilable with data in GBQ for date range <br>{{start_date}} and {{end_date}}
+    {% endblock %}
+</body>
+</html>
